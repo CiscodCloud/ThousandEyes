@@ -1,0 +1,214 @@
+{
+    "name": "OAuth API Template",
+    "description": "A simple template for an API with an OAuth 2.0 flow",
+    "icon": "",
+    "summary": "A simple template for an API with an OAuth 2.0 flow",
+    "version": null,
+    "defaultName": "OAuth API",
+    "documentation": null,
+    "isBuiltIn": false,
+    "certificationLevel": "user",
+    "modules": [
+        "default"
+    ],
+    "userInputs": {
+        "oauth_target": {
+            "name": "Enter your OAuth URL",
+            "title": "",
+            "description": null,
+            "defaultValue": null,
+            "allowedValues": [],
+            "type": "string",
+            "format": null,
+            "enabledCloudAgentGroups": []
+        },
+        "client_id": {
+            "name": "Enter your Client ID",
+            "title": "",
+            "description": null,
+            "defaultValue": null,
+            "allowedValues": [],
+            "type": "string",
+            "format": null,
+            "enabledCloudAgentGroups": []
+        },
+        "client_secret": {
+            "name": "Enter your Client Secret",
+            "title": "",
+            "description": null,
+            "defaultValue": null,
+            "allowedValues": [],
+            "type": "string",
+            "format": null,
+            "enabledCloudAgentGroups": []
+        },
+        "scope": {
+            "name": "Enter your Scope",
+            "title": "",
+            "description": null,
+            "defaultValue": "",
+            "allowedValues": [],
+            "type": "string",
+            "format": null,
+            "enabledCloudAgentGroups": []
+        },
+        "api_target": {
+            "name": "Enter your API URL",
+            "title": "",
+            "description": null,
+            "defaultValue": null,
+            "allowedValues": [],
+            "type": "string",
+            "format": null,
+            "enabledCloudAgentGroups": []
+        },
+        "agents": {
+            "name": "Which agents should we test from?",
+            "title": "",
+            "description": null,
+            "defaultValue": null,
+            "allowedValues": [],
+            "type": "any",
+            "format": null,
+            "enabledCloudAgentGroups": []
+        },
+        "interval": {
+            "name": "How often should we run tests?",
+            "title": "",
+            "description": null,
+            "defaultValue": 60,
+            "allowedValues": [],
+            "type": "number",
+            "format": null,
+            "enabledCloudAgentGroups": []
+        }
+    },
+    "labels": {
+        "templateLabel": {
+            "name": "{{name}}"
+        }
+    },
+    "tags": {},
+    "tests": {
+        "apitest": {
+            "groups": [
+                {
+                    "groupId": "{{labels.templateLabel.groupId}}"
+                }
+            ],
+            "interval": "{{userInputs.interval}}",
+            "requests": [
+                {
+                    "headers": [
+                        {
+                            "value": "1",
+                            "key": "x-thousandeyes-api-step-level"
+                        },
+                        {
+                            "value": "yes",
+                            "key": "x-thousandeyes-agent"
+                        },
+                        {
+                            "value": "ThousandEyes",
+                            "key": "User-Agent"
+                        },
+                        {
+                            "value": "*/*",
+                            "key": "Accept"
+                        },
+                        {
+                            "value": "gzip, deflate, br",
+                            "key": "Accept-Encoding"
+                        },
+                        {
+                            "value": "keep-alive",
+                            "key": "Connection"
+                        },
+                        {
+                            "value": "application/x-www-form-urlencoded",
+                            "key": "Content-Type"
+                        }
+                    ],
+                    "variables": [
+                        {
+                            "name": "access_token",
+                            "value": "access_token"
+                        }
+                    ],
+                    "method": "POST",
+                    "name": "Get Bearer Token",
+                    "assertions": [
+                        {
+                            "name": "STATUS_CODE",
+                            "value": "200",
+                            "operator": "IS"
+                        }
+                    ],
+                    "authType": "NONE",
+                    "collectApiResponse": true,
+                    "body": "grant_type=client_credentials&client_id={{userInputs.client_id}}&client_secret={{userInputs.client_secret}}{{#if userInputs.scope }}&scope={{userInputs.scope}}{{/if}}",
+                    "url": "{{userInputs.oauth_target}}",
+                    "username": ""
+                },
+                {
+                    "headers": [
+                        {
+                            "value": "2",
+                            "key": "x-thousandeyes-api-step-level"
+                        },
+                        {
+                            "value": "yes",
+                            "key": "x-thousandeyes-agent"
+                        },
+                        {
+                            "value": "ThousandEyes",
+                            "key": "User-Agent"
+                        },
+                        {
+                            "value": "*/*",
+                            "key": "Accept"
+                        },
+                        {
+                            "value": "gzip, deflate, br",
+                            "key": "Accept-Encoding"
+                        },
+                        {
+                            "value": "keep-alive",
+                            "key": "Connection"
+                        }
+                    ],
+                    "variables": [],
+                    "bearerToken": "\\{\\{ access_token \\}\\}",
+                    "method": "GET",
+                    "name": "Get Resource",
+                    "assertions": [
+                        {
+                            "name": "STATUS_CODE",
+                            "value": "200",
+                            "operator": "IS"
+                        }
+                    ],
+                    "authType": "BEARER_TOKEN",
+                    "collectApiResponse": true,
+                    "body": "",
+                    "url": "{{ userInputs.api_target }}",
+                    "username": ""
+                }
+            ],
+            "type": "api",
+            "url": "{{ userInputs.api_target }}",
+            "testName": "{{name}} - API",
+            "agents": "{{userInputs.agents}}"
+        }
+    },
+    "endpointTests": {},
+    "alertRules": {},
+    "dashboardFilters": {},
+    "dashboards": {},
+    "groupings": [],
+    "deploymentStrategy": {
+        "apitest": "update",
+        "templateLabel": "update"
+    },
+    "templateCollections": []
+}
